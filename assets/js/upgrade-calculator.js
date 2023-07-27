@@ -51,7 +51,9 @@ function calculateUpgrades(upgradesData, baseStats, fromLevel, toLevel ) {
         multiplierAttack: multiplierAttack,
         endHp: runningHp,
         endAttack: runningAttack,
-        endDps: round(runningAttack/baseStats.attackSpeed) 
+        // stupid round...
+        // endDps: round(runningAttack/baseStats.attackSpeed) 
+        endDps: runningAttack / baseStats.attackSpeed 
     };
 
     return result;
