@@ -17,8 +17,11 @@ function calculateUpgrades(upgradesData, baseStats, fromLevel, toLevel ) {
     // Loop through each upgrade object and sum up the values within the specified range of levels
     upgradesData.forEach(upgrade => {
         // calculate runningHp and multiplierHp for each level, since we only store the base stat
-        runningHp = round(runningHp * upgrade.multiplierHp);
-        runningAttack = round(runningAttack * upgrade.multiplierAttack);
+        // TODO: round throws an undefiined error??
+        // runningHp = round(runningHp * upgrade.multiplierHp);
+        // runningAttack = round(runningAttack * upgrade.multiplierAttack);
+        runningHp = runningHp * upgrade.multiplierHp;
+        runningAttack = runningAttack * upgrade.multiplierAttack;
         if (upgrade.level > fromLevel && upgrade.level <= toLevel) {
             sumEpic += upgrade.epic;
             sumRare += upgrade.rare;
