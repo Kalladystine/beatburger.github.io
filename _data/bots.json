@@ -46,5 +46,21 @@
       "attack": 125,
       "attackSpeed": 0.57
     }
+  },
+  {
+    "botName": "Inkjet",
+    "botDescription": "later",
+    "botImageUrl": "later",
+    "botType": "Evader",
+    "botRarity": "Epic",
+    "botRaritySortOrder": "4",
+    "botAcquisition": "drop",
+    "botOpinion": "Real ninja",
+    "searchKeywords": "",
+    "baseStats": {
+      "hp": 1176,
+      "attack": 75,
+      "attackSpeed": 1
+    }
   }
 ]
