@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const selectedBot = getSelectedBot(selectedBotName);
 
     if (selectedBot) {
-      const upgradesData = {{ site .data.upgrades | jsonify }};
+      const upgradesData = {{ site.data.botupgrades | jsonify }};
       const baseStats = selectedBot.baseStats;
 
     const fromLevel = parseInt(fromLevelInput.value); // Replace with the desired fromLevel
