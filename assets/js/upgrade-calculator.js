@@ -20,19 +20,21 @@ function calculateUpgrades(upgradesData, baseStats, fromLevel, toLevel ) {
         // TODO: round throws an undefiined error??
         // runningHp = round(runningHp * upgrade.multiplierHp);
         // runningAttack = round(runningAttack * upgrade.multiplierAttack);
-        runningHp = runningHp * upgrade.multiplierHp;
-        runningAttack = runningAttack * upgrade.multiplierAttack;
-        if (upgrade.level > fromLevel && upgrade.level <= toLevel) {
-            sumEpic += upgrade.epic;
-            sumRare += upgrade.rare;
-            sumSpecial += upgrade.special;
-            sumCommon1 += upgrade.common1;
-            sumCommon2 += upgrade.common2;
-            sumCommon3 += upgrade.common3;
-            sumGold += upgrade.gold;
-            // for multipliers we need to multiply, not add
-            multiplierHp *= upgrade.multiplierHp;
-            multiplierAttack *= upgrade.multiplierAttack;
+        if (upgrade.level <= toLevel) {
+            runningHp = runningHp * upgrade.multiplierHp;
+            runningAttack = runningAttack * upgrade.multiplierAttack;
+            if (upgrade.level > fromLevel) {
+                sumEpic += upgrade.epic;
+                sumRare += upgrade.rare;
+                sumSpecial += upgrade.special;
+                sumCommon1 += upgrade.common1;
+                sumCommon2 += upgrade.common2;
+                sumCommon3 += upgrade.common3;
+                sumGold += upgrade.gold;
+                // for multipliers we need to multiply, not add
+                multiplierHp *= upgrade.multiplierHp;
+                multiplierAttack *= upgrade.multiplierAttack;
+            }
         }
     });
 
