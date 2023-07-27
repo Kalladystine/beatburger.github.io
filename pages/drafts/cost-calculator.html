@@ -1,0 +1,43 @@
+---
+layout: none
+permalink: /cost-calculator
+robots: "NOINDEX, NOFOLLOW"
+sitemap: false
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Open Graph meta tags -->
+    <meta property="og:title" content="Title - Testing dynamic embeds">
+    <meta property="og:description" content="Description - Testing dynamic embeds" />
+    <meta property="og:url" content="{{ site.url }}{{ site.baseurl }}{{page.url}}" />
+    <meta property="og:image" content="https://www.botworld.wiki/assets/img/icons/party-cog.png" />
+
+    <script>
+        // JavaScript code to set dynamic title
+        document.addEventListener('DOMContentLoaded', function () {
+            // Function to get the current timestamp in a specific format
+            function getCurrentTimestamp() {
+                const date = new Date();
+                return date.toISOString();
+            }
+
+            // Set the dynamic title for the Open Graph meta tag
+            const ogTitleElement = document.querySelector('meta[property="og:title"]');
+            ogTitleElement.setAttribute('content', getCurrentTimestamp());
+
+            // Set the dynamic description for the Open Graph meta tag
+            const ogDescriptionElement = document.querySelector('meta[property="og:description"]');
+            ogDescriptionElement.setAttribute('content', getCurrentTimestamp());
+        });
+    </script>
+</head>
+<body>
+    <!-- Your page content here -->
+    <h1>Hello, Coggy :-)</h1>
+</body>
+</html>
