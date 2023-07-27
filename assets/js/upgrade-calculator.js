@@ -43,7 +43,6 @@ function calculateUpgrades(upgradesData, baseStats, fromLevel, toLevel ) {
                 multiplierAttack *= upgrade.multiplierAttack;
             }
         }
-        if (upgrade.level == fromLevel)
     });
 
     // Create an object to store the results
