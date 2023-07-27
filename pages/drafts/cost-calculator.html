@@ -1,43 +1,80 @@
 ---
-layout: none
-permalink: /cost-calculator
-robots: "NOINDEX, NOFOLLOW"
-sitemap: false
+layout: breadcrumbs
+permalink: /cost-calculator-draft
 ---
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<h1>Upgrade Calculator</h1>
+<label for="botSelect">Select a Bot:</label>
+<select id="botSelect">
+    {% for bot in site.data.bots %}
+    <option value="{{ bot.botName }}">{{ bot.botName }}</option>
+    {% endfor %}
+</select>
 
-    <!-- Open Graph meta tags -->
-    <meta property="og:title" content="Title - Testing dynamic embeds">
-    <meta property="og:description" content="Description - Testing dynamic embeds" />
-    <meta property="og:url" content="{{ site.url }}{{ site.baseurl }}" />
-    <meta property="og:image" content="https://www.botworld.wiki/assets/img/icons/party-cog.png" />
+<label for="fromLevel">From Level:</label>
+<input type="number" id="fromLevel" value="0" min="0" max="29">
 
-    <script>
-        // JavaScript code to set dynamic title
-        document.addEventListener('DOMContentLoaded', function () {
-            // Function to get the current timestamp in a specific format
-            function getCurrentTimestamp() {
-                const date = new Date();
-                return date.toISOString();
-            }
+<label for="toLevel">To Level:</label>
+<input type="number" id="toLevel" value="10" min="1" max="30">
 
-            // Set the dynamic title for the Open Graph meta tag
-            const ogTitleElement = document.querySelector('meta[property="og:title"]');
-            ogTitleElement.setAttribute('content', getCurrentTimestamp());
+<button id="calculateButton">Calculate Upgrades</button>
 
-            // Set the dynamic description for the Open Graph meta tag
-            const ogDescriptionElement = document.querySelector('meta[property="og:description"]');
-            ogDescriptionElement.setAttribute('content', getCurrentTimestamp());
-        });
-    </script>
-</head>
-<body>
-    <!-- Your page content here -->
-    <h1>Hello, Coggy :-)</h1>
-</body>
-</html>
+<div id="resultContainer"></div>
+<!-- Add upgrade calculator -->
+<script src="{{ site.baseurl }}/assets/js/upgrade-calculator.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const botSelectInput = document.getElementById("botSelect");
+    const fromLevelInput = document.getElementById("fromLevel");
+    const toLevelInput = document.getElementById("toLevel");
+  const calculateButton = document.getElementById("calculateButton");
+  const resultContainer = document.getElementById("resultContainer");
+
+  calculateButton.addEventListener("click", function () {
+      const selectedBotName = botSelectInput.value;
+    const selectedBot = getSelectedBot(selectedBotName);
+
+    if (selectedBot) {
+      const upgradesData = {{ site .data.upgrades | jsonify }};
+      const baseStats = selectedBot.baseStats;
+
+    const fromLevel = parseInt(fromLevelInput.value); // Replace with the desired fromLevel
+    const toLevel = parseInt(toLevelInput.value); // Replace with the desired toLevel
+
+      const upgradeResult = calculateUpgrades(
+        upgradesData,
+        baseStats,
+        fromLevel,
+        toLevel
+      );
+
+      // Display the results in the resultContainer
+    resultContainer.innerHTML = `
+<p>Base Stats Hp: ${baseStats.hp}</p>
+<p>Base Stats Attack: ${baseStats.attack}</p>
+<p>Base Stats Attack Speed: ${baseStats.attackSpeed}</p>
+<p> </p>
+<p>From Level: ${upgradeResult.fromLevel}</p>
+<p>To Level: ${upgradeResult.toLevel}</p>
+<p>Sum Epic: ${upgradeResult.sumEpic}</p>
+<p>Sum Rare: ${upgradeResult.sumRare}</p>
+<p>Sum Special: ${upgradeResult.sumSpecial}</p>
+<p>Sum Common1: ${upgradeResult.sumCommon1}</p>
+<p>Sum Common2: ${upgradeResult.sumCommon2}</p>
+<p>Sum Common3: ${upgradeResult.sumCommon3}</p>
+<p>Sum Gold: ${upgradeResult.sumGold}</p>
+<p>multiplierHp: ${upgradeResult.multiplierHp}</p>
+<p>multiplierAttack: ${upgradeResult.multiplierAttack}</p>
+<p>End Hp: ${upgradeResult.endHp}</P
+<p>End Attack: ${upgradeResult.endAttack}</P
+<p>End Dps: ${upgradeResult.endDps}</P
+      `;
+    }
+  });
+
+  // Function to get the selected bot from the data
+  function getSelectedBot(botName) {
+    return {{ site.data.bots | jsonify }}.find((bot) => bot.botName === botName);
+  }
+});
+</script>

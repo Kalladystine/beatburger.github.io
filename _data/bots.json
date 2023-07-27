@@ -1,0 +1,34 @@
+[
+  {
+    "botName": "Bullwark",
+    "botDescription": "Bullwark's front-facing shield makes it great at taking on a single enemy, or a group of enemies from the same direction.",
+    "botImageUrl": "https://cdn.discordapp.com/attachments/873396923137142855/873397823192842281/bullwark.png",
+    "botType": "Tank",
+    "botRarity": "Rare",
+    "botRaritySortOrder": "3",
+    "botAcquisition": "drop",
+    "botOpinion": "A tank in the most classical sense. The big damage reduction from the front allows it to soak lots of damage, allowing Bullwark to always keep pushing forwards to disturb and stun.",
+    "searchKeywords": "tank, shield, cc, stun",
+    "baseStats": {
+      "hp": 2070,
+      "attack": 40,
+      "attackSpeed": 0.86
+    }
+  },
+  {
+    "botName": "Bigshot",
+    "botDescription": "Its attack takes a while to charge up, but it's worth the wait",
+    "botImageUrl": "https://cdn.discordapp.com/attachments/885544735794692146/885547177638772776/bigshot.png",
+    "botType": "Sniper",
+    "botRarity": "Epic",
+    "botRaritySortOrder": "4",
+    "botAcquisition": "drop",
+    "botOpinion": "Nothing is more scary than an enemy Bigshot about to shoot. Nothing is more satisfying than your own blasting through your opponents. But will it get to shoot?",
+    "searchKeywords": "",
+    "baseStats": {
+      "hp": 1456,
+      "attack": 600,
+      "attackSpeed": 4.0
+    }
+  }
+]
