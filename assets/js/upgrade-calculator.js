@@ -18,11 +18,6 @@ function calculateUpgrades(upgradesData, baseStats, fromLevel, toLevel ) {
 
     // Loop through each upgrade object and sum up the values within the specified range of levels
     upgradesData.forEach(upgrade => {
-        // checkpoint for starting level values
-        if (upgrade.level == fromLevel) {
-            checkpointHp = runningHp;
-            checkpointAttack = runningAttack;
-        }
         // calculate runningHp and multiplierHp for each level, since we only store the base stat
         // TODO: round throws an undefiined error??
         // runningHp = round(runningHp * upgrade.multiplierHp);
@@ -42,6 +37,11 @@ function calculateUpgrades(upgradesData, baseStats, fromLevel, toLevel ) {
                 multiplierHp *= upgrade.multiplierHp;
                 multiplierAttack *= upgrade.multiplierAttack;
             }
+        }
+        // checkpoint for starting level values
+        if (upgrade.level == fromLevel) {
+            checkpointHp = runningHp;
+            checkpointAttack = runningAttack;
         }
     });
 
