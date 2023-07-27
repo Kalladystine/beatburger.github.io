@@ -30,5 +30,21 @@
       "attack": 600,
       "attackSpeed": 4.0
     }
+  },
+  {
+    "botName": "Phantom",
+    "botDescription": "later",
+    "botImageUrl": "later",
+    "botType": "Chaser",
+    "botRarity": "Epic",
+    "botRaritySortOrder": "4",
+    "botAcquisition": "drop",
+    "botOpinion": "Cool ninja",
+    "searchKeywords": "",
+    "baseStats": {
+      "hp": 1008,
+      "attack": 125,
+      "attackSpeed": 0.57
+    }
   }
 ]
