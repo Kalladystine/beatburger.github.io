@@ -87,14 +87,15 @@ permalink: /cost-calculator-draft
     }
 
 // Function to populate the table with the resultsCollection data
-function populateTable(results)
+function populateTable(results, fromLevel, toLevel)
 {
     const tableBody = document.querySelector("#results-table tbody");
-
+    tableBody.innerHTML = "";
     results.forEach(result =>
     {
-        const row = document.createElement("tr");
-        row.innerHTML = `
+        if (result.level == 0 || (result.level >= fromLevel && result.level <= toLevel)) {
+            const row = document.createElement("tr");
+            row.innerHTML = `
             <td>${result.level}</td>
             <td>${result.sumEpic}</td>
             <td>${result.sumRare}</td>
@@ -107,7 +108,8 @@ function populateTable(results)
             <td>${result.endAttack}</td>
             <td>${result.endDps}</td>
             `;
-        tableBody.appendChild(row);
+            tableBody.appendChild(row);
+        }
     });
 }
     });
