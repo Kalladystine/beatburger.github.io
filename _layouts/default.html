@@ -1032,7 +1032,7 @@
             }
 
             // Function to convert a File to a base64-encoded string
-            function fileToBase64(file) {
+            async function fileToBase64(file) {
                 return new Promise((resolve, reject) => {
                     const reader = new FileReader();
                     reader.onload = (event) => {
@@ -1046,7 +1046,7 @@
             feedbackTrigger.addEventListener("click", showFeedbackForm);
             closeButton.addEventListener("click", hideFeedbackForm);
 
-            feedbackForm.addEventListener("submit", function (event) {
+            feedbackForm.addEventListener("submit", async function (event) {
                 event.preventDefault();
 
                 const nickname = document.getElementById("nickname").value;
