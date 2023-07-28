@@ -74,7 +74,7 @@ permalink: /cost-calculator-draft
                     toLevel
                     );
 
-            populateTable(upgradeResultsCollection);
+            populateTable(upgradeResultsCollection, fromLevel, toLevel);
             resultsJSONElement.textContent = JSON.stringify(upgradeResultsCollection, null, 2);
 
             }
