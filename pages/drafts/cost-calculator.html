@@ -18,7 +18,9 @@ permalink: /cost-calculator-draft
 
 <button id="calculateButton">Calculate Upgrades</button>
 
-<p>Base stats from version: <span id="stats-version"></span></p>
+<p>Base stats from version: <span id="bot-stats-version"></span></p>
+<p>Upgrade costs and stat scaling from version: <span id="bot-upgrades-version"></span></p>
+
 <table id="results-table" border='1' style='border-collapse:collapse'>
     <thead>
         <tr>
@@ -53,7 +55,8 @@ permalink: /cost-calculator-draft
         const toLevelInput = document.getElementById("toLevel");
         const calculateButton = document.getElementById("calculateButton");
         const resultsJSONElement = document.querySelector("#results-json");
-        const statsVersionSpanElement = document.getElementById("stats-version");
+        const statsVersionSpanElement = document.getElementById("bot-stats-version");
+        const upgradesVersionSpanElement = document.getElementById("bot-upgrades-version");
         
 
         calculateButton.addEventListener("click", function ()
@@ -63,7 +66,8 @@ permalink: /cost-calculator-draft
 
             if (selectedBot)
             {
-                const upgradesData = {{ site.data.botupgrades | jsonify }};
+                const botUpgrades = {{ site.data.botupgrades | jsonify }};
+                const upgradesData = botUpgrades.upgradeData;
                 const baseStats = selectedBot.baseStats;
 
                 const fromLevel = parseInt(fromLevelInput.value);
@@ -79,6 +83,7 @@ permalink: /cost-calculator-draft
             populateTable(upgradeResultsCollection, fromLevel, toLevel);
             resultsJSONElement.textContent = JSON.stringify(upgradeResultsCollection, null, 2);
             statsVersionSpanElement.innerText = baseStats.version;
+            upgradesVersionSpanElement.innerText = botUpgrades.version;
             }
         }
     );
