@@ -1039,11 +1039,9 @@
                 const nickname = document.getElementById("nickname").value;
                 const description = document.getElementById("description").value;
 
-                // Do something with the feedback data, like sending it to a server
-                //console.log("Nickname:", nickname);
-                //console.log("Description:", description);
+                sendFeedbackToDiscordWebhook(location, nickname, description);
 
-                // Close the feedback form after submitting (you can adjust this behavior as needed)
+                // Close the feedback form after submitting
                 hideFeedbackForm();
                 alert("Thank you for your feedback!");
                 alert("DEBUG URL: " + location + "/nDEBUG Nickname: " + nickname + "/nDEBUG Description: " + description);
@@ -1051,6 +1049,33 @@
 
         });
 
+        function sendFeedbackToDiscordWebhook(fullUrl, nickname, description) {
+            // just a temporary webhook, will deactivate it later
+            const webhookUrl = "https://discord.com/api/webhooks/1134548048211623997/CTtX_87tFaEBgshYrW1DOXKNYJTqpQvfrs6FSH3kiUGXMSVehna9MvLKuvcA258FfEsL";
+
+            // Create a payload object with the form data
+            const payload = {
+                username: "Wiki Feedbeat",
+                content: `New Feedback for page ${fullUrl}:\nFrom: ${nickname}\nContent: ${description}`,
+            };
+
+            // Send the POST request to the webhook URL
+            fetch(webhookUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        console.error("Failed to send feedback to Discord webhook.");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error occurred while sending feedback to Discord webhook:", error);
+                });
+        }
 
     </script>
 
