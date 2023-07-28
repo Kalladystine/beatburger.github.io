@@ -1,6 +1,8 @@
 // usage example:
 // TBD
 function calculateUpgrades(upgradesData, baseStats, fromLevel, toLevel ) {
+    const resultsCollection = [];
+
     // Initialize the sums for each element
     let sumEpic = 0;
     let sumRare = 0;
@@ -43,29 +45,48 @@ function calculateUpgrades(upgradesData, baseStats, fromLevel, toLevel ) {
             checkpointHp = runningHp;
             checkpointAttack = runningAttack;
         }
+        const levelResult = {
+            level: upgrade.level,
+            sumEpic: sumEpic,
+            sumRare: sumRare,
+            sumSpecial: sumSpecial,
+            sumCommon1: sumCommon1,
+            sumCommon2: sumCommon2,
+            sumCommon3: sumCommon3,
+            sumGold: sumGold,
+            multiplierHp: multiplierHp,
+            multiplierAttack: multiplierAttack,
+            endHp: runningHp,
+            endAttack: runningAttack,
+            endDps: runningAttack / baseStats.attackSpeed,
+            checkpointHp: checkpointHp,
+            checkpointAttack: checkpointAttack
+        };
+        resultsCollection.push(levelResult);
+
     });
 
-    // Create an object to store the results
-    const result = {
-        fromLevel: fromLevel,
-        toLevel: toLevel,
-        sumEpic: sumEpic,
-        sumRare: sumRare,
-        sumSpecial: sumSpecial,
-        sumCommon1: sumCommon1,
-        sumCommon2: sumCommon2,
-        sumCommon3: sumCommon3,
-        sumGold: sumGold,
-        multiplierHp: multiplierHp,
-        multiplierAttack: multiplierAttack,
-        endHp: runningHp,
-        endAttack: runningAttack,
-        // stupid round...
-        // endDps: round(runningAttack/baseStats.attackSpeed) 
-        endDps: runningAttack / baseStats.attackSpeed,
-        checkpointHp: checkpointHp,
-        checkpointAttack: checkpointAttack
-    };
+    //// Create an object to store the results
+    //const result = {
+    //    fromLevel: fromLevel,
+    //    toLevel: toLevel,
+    //    sumEpic: sumEpic,
+    //    sumRare: sumRare,
+    //    sumSpecial: sumSpecial,
+    //    sumCommon1: sumCommon1,
+    //    sumCommon2: sumCommon2,
+    //    sumCommon3: sumCommon3,
+    //    sumGold: sumGold,
+    //    multiplierHp: multiplierHp,
+    //    multiplierAttack: multiplierAttack,
+    //    endHp: runningHp,
+    //    endAttack: runningAttack,
+    //    // stupid round...
+    //    // endDps: round(runningAttack/baseStats.attackSpeed) 
+    //    endDps: runningAttack / baseStats.attackSpeed,
+    //    checkpointHp: checkpointHp,
+    //    checkpointAttack: checkpointAttack
+    //};
 
-    return result;
+    return resultsCollection;
 }
