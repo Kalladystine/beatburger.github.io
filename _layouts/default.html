@@ -620,10 +620,11 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background-color: #fff;
+            background-color: #333; /* Dark gray background color */
+            color: #fff; /* White text color */
             padding: 20px;
             border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Darker box shadow */
         }
 
             .feedback-form h2 {
@@ -636,12 +637,22 @@
             .feedback-form button {
                 display: block;
                 margin-bottom: 10px;
+                color: #fff; /* White text color */
             }
 
             .feedback-form button {
                 margin-top: 20px;
+                background-color: #555; /* Darker gray button background color */
+                color: #fff; /* White text color */
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+                cursor: pointer;
             }
 
+            .feedback-form button:hover {
+                background-color: #777; /* Slightly lighter gray on hover */
+            }
         /* END Styles for the feedback overlay */
     </style>
 
