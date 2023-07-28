@@ -12,7 +12,8 @@
     "baseStats": {
       "hp": 2070,
       "attack": 40,
-      "attackSpeed": 0.86
+      "attackSpeed": 0.86,
+      "version":  "1.14.6"
     }
   },
   {
@@ -28,7 +29,8 @@
     "baseStats": {
       "hp": 1456,
       "attack": 600,
-      "attackSpeed": 4.0
+      "attackSpeed": 4.0,
+      "version": "1.14.6"
     }
   },
   {
@@ -44,7 +46,8 @@
     "baseStats": {
       "hp": 1008,
       "attack": 125,
-      "attackSpeed": 0.57
+      "attackSpeed": 0.57,
+      "version": "unknown"
     }
   },
   {
@@ -60,7 +63,8 @@
     "baseStats": {
       "hp": 1176,
       "attack": 75,
-      "attackSpeed": 1
+      "attackSpeed": 1,
+      "version": "1.14.6"
     }
   }
 ]

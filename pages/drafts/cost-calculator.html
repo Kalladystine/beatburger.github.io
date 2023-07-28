@@ -18,6 +18,7 @@ permalink: /cost-calculator-draft
 
 <button id="calculateButton">Calculate Upgrades</button>
 
+<p>Base stats from version: <span id="stats-version"></span></p>
 <table id="results-table" border='1' style='border-collapse:collapse'>
     <thead>
         <tr>
@@ -52,6 +53,7 @@ permalink: /cost-calculator-draft
         const toLevelInput = document.getElementById("toLevel");
         const calculateButton = document.getElementById("calculateButton");
         const resultsJSONElement = document.querySelector("#results-json");
+        const statsVersionSpanElement = document.getElementById("stats-version");
         
 
         calculateButton.addEventListener("click", function ()
@@ -76,7 +78,7 @@ permalink: /cost-calculator-draft
 
             populateTable(upgradeResultsCollection, fromLevel, toLevel);
             resultsJSONElement.textContent = JSON.stringify(upgradeResultsCollection, null, 2);
-
+            statsVersionSpanElement.innerText = baseStats.version;
             }
         }
     );
