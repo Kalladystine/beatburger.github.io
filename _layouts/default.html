@@ -1098,13 +1098,14 @@
                     url: 'attachment://image.png'
                 };
                 
-                payload.attachments = [
-                    {
-                        name: 'image.png',
-                        content_type: 'image/png',
-                        data: imageData
-                    }
-                ];
+                //payload.attachments = [
+                //    {
+                //        name: 'image.png',
+                //        content_type: 'image/png',
+                //        data: imageData
+                //    }
+                //];
+                payload.file = imageData;
             }
 
             const payloadJson = JSON.stringify(payload);
