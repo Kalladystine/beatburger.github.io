@@ -979,7 +979,7 @@
                 <label for="description">Description:</label>
                 <textarea id="description" required></textarea>
                 <label for="imageInput">Add image (optional, max 1):</label>
-                <input type="file" id="imageInput" accept="image/*">
+                <input type="file" id="imageInput" accept="image/png">
                 <button type="submit">Submit</button>
                 <button type="button" id="closeButton">Close</button>
             </form>
@@ -1095,13 +1095,13 @@
             // If imageData is not null, include the image embed and attachment
             if (imageData !== null) {
                 payload.embeds[0].image = {
-                    url: 'attachment://image.jpg'
+                    url: 'attachment://image.png'
                 };
                 
                 payload.attachments = [
                     {
-                        name: 'image.jpg',
-                        content_type: 'image/jpeg',
+                        name: 'image.png',
+                        content_type: 'image/png',
                         data: imageData
                     }
                 ];
@@ -1121,6 +1121,7 @@
                         alert('Thank you for your feedback!');
                     } else {
                         alert('Something went wrong... If it keeps happening, contact us on Discord.');
+                        console.error("Error occurred while sending feedback:", response)
                     }
                 })
                 .catch(error => {
