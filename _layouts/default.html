@@ -978,10 +978,11 @@
 
                 <label for="description">Description:</label>
                 <textarea id="description" required></textarea>
-                <label for="imageInput">Add image (optional, max 1):</label>
-                <input type="file" id="imageInput" accept="image/png">
+                <label for="imageInput">Add image (max 1):</label>
+                <input type="file" id="imageInput" accept="image/png, image/jpg, image/jpeg, image/webp">
                 <button type="submit">Submit</button>
                 <button type="button" id="closeButton">Close</button>
+                <button type="button" id="resteButton">Reset</button>
             </form>
         </div>
     </div>
@@ -1022,6 +1023,7 @@
             const feedbackOverlay = document.getElementById("feedbackOverlay");
             const feedbackForm = document.getElementById("feedbackForm");
             const closeButton = document.getElementById("closeButton");
+            const resetButton = document.getElementById("resetButton");
 
             function showFeedbackForm() {
                 feedbackOverlay.style.display = "block";
@@ -1031,18 +1033,23 @@
                 feedbackOverlay.style.display = "none";
             }
 
-            // Function to convert a File to a base64-encoded string
-            async function readFileAsDataURL(file) {
-                return new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onloadend = () => resolve(reader.result);
-                    reader.onerror = reject;
-                    reader.readAsDataURL(file);
-                });
+            function resetFeedbackForm() {
+                feedbackForm.reset();
             }
+
+            //// Function to convert a File to a base64-encoded string
+            //async function readFileAsDataURL(file) {
+            //    return new Promise((resolve, reject) => {
+            //        const reader = new FileReader();
+            //        reader.onloadend = () => resolve(reader.result);
+            //        reader.onerror = reject;
+            //        reader.readAsDataURL(file);
+            //    });
+            //}
 
             feedbackTrigger.addEventListener("click", showFeedbackForm);
             closeButton.addEventListener("click", hideFeedbackForm);
+            resetButton.addEventListener("click", resetFeedbackForm);
 
             feedbackForm.addEventListener("submit", async function (event) {
                 event.preventDefault();
@@ -1050,7 +1057,8 @@
                 const nickname = document.getElementById("nickname").value;
                 const description = document.getElementById("description").value;
                 const fileInput = document.getElementById('imageInput');
-                let imageData = null;
+                let file = null;
+                let fileExtension = null;
 
                 if (fileInput.files.length > 1) {
                     alert('Only one image is allowed.');
@@ -1058,24 +1066,25 @@
                 }
 
                 if (fileInput.files.length == 1) {
-                    const file = fileInput.files[0];
-                    imageData = await readFileAsDataURL(file);
+                    file = fileInput.files[0];
+                    fileExtension = file.name.split('.').pop().toLowerCase();
                 }
 
                 try {
-                    sendFeedbackToDiscord(location, nickname, description, imageData);
+                    sendFeedbackToDiscord(location, nickname, description, file, fileExtension);
                 } catch (error) {
-                    alert('An error occurred: ' + error.message);
+                    alert('Something went wrong... If it keeps happening, contact us on Discord.');
+                    console.error("Error occurred while sending feedback:", error)
                 }
 
                 // Close the feedback form after submitting
                 hideFeedbackForm();
-                feedbackForm.reset();
+                resetFeedbackForm();
             });
 
         });
 
-        function sendFeedbackToDiscord(fullUrl, nickname, description, imageData) {
+        function sendFeedbackToDiscord(fullUrl, nickname, description, imageFile, fileExtension) {
             // just a temporary webhook, will deactivate it later
             const webhookUrl = "https://discord.com/api/webhooks/1134548048211623997/CTtX_87tFaEBgshYrW1DOXKNYJTqpQvfrs6FSH3kiUGXMSVehna9MvLKuvcA258FfEsL";
 
@@ -1090,30 +1099,21 @@
                 ]
             };
 
-            // If imageData is not null, include the image embed and attachment
-            if (imageData !== null) {
+            const formData = new FormData();
+
+            if (imageFile !== null) {
                 payload.embeds[0].image = {
-                    url: imageData
+                    url: 'attachment://image.' + fileExtension
                 };
-                
-                //payload.attachments = [
-                //    {
-                //        name: 'image.png',
-                //        content_type: 'image/png',
-                //        data: imageData
-                //    }
-                //];
-                // payload.file = imageData;
+                formData.append('image', imageFile, 'image.' + fileExtension);
             }
 
             const payloadJson = JSON.stringify(payload);
+            formData.append('payload_json', JSON.stringify(payload));
 
-            fetch(webhookUrl, {
+            fetch(webhookURL, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: payloadJson
+                body: formData,
             })
                 .then(response => {
                     if (response.ok) {
@@ -1128,35 +1128,6 @@
                     console.error("Error occurred while sending feedback:", error)
                 });
         }
-
-        function sendFeedbackToDiscordWebhook(fullUrl, nickname, description) {
-            // just a temporary webhook, will deactivate it later
-            const webhookUrl = "https://discord.com/api/webhooks/1134548048211623997/CTtX_87tFaEBgshYrW1DOXKNYJTqpQvfrs6FSH3kiUGXMSVehna9MvLKuvcA258FfEsL";
-
-            // Create a payload object with the form data
-            const payload = {
-                username: "Wiki Feedbeat",
-                content: `New Feedback for page ${fullUrl}:\nFrom: ${nickname}\nContent: ${description}`,
-            };
-
-            // Send the POST request to the webhook URL
-            fetch(webhookUrl, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(payload),
-            })
-                .then((response) => {
-                    if (!response.ok) {
-                        console.error("Failed to send feedback to Discord webhook.");
-                    }
-                })
-                .catch((error) => {
-                    console.error("Error occurred while sending feedback to Discord webhook:", error);
-                });
-        }
-
     </script>
 
 </body>
