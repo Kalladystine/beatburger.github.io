@@ -1111,7 +1111,7 @@
             const payloadJson = JSON.stringify(payload);
             formData.append('payload_json', JSON.stringify(payload));
 
-            fetch(webhookURL, {
+            fetch(webhookUrl, {
                 method: 'POST',
                 body: formData,
             })
