@@ -1067,7 +1067,7 @@
                 let file = null;
                 let fileExtension = null;
 
-                {%- if site.data.featureData.feedback.allowImage -%}
+                {% if site.data.featureData.feedback.allowImage %}
                 const fileInput = document.getElementById('imageInput');
 
                 if (fileInput.files.length > 1) {
@@ -1079,7 +1079,7 @@
                     file = fileInput.files[0];
                     fileExtension = file.name.split('.').pop().toLowerCase();
                 }
-                {%- endif -%}
+                {% endif %}
 
                 try {
                     sendFeedbackToDiscord(location, nickname, description, file, fileExtension);
@@ -1112,14 +1112,14 @@
 
             const formData = new FormData();
 
-            {%- if site.data.featureData.feedback.allowImage -%}
+            {% if site.data.featureData.feedback.allowImage %}
             if (imageFile !== null) {
                 payload.embeds[0].image = {
                     url: 'attachment://image.' + fileExtension
                 };
                 formData.append('image', imageFile, 'image.' + fileExtension);
             }
-            {%- endif -%}
+            {% endif %}
 
             const payloadJson = JSON.stringify(payload);
             formData.append('payload_json', JSON.stringify(payload));
