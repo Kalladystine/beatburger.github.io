@@ -603,6 +603,7 @@
             text-shadow: 2px 2px 1px #ad5522
         }
 
+        {%- if site.data.featureData.feedback.enabled -%}
         /* Styles for the feedback overlay */
         .feedback-overlay {
             display: none;
@@ -638,11 +639,17 @@
                 color: #fff; /* White text color */
             }
 
-            .feedback-form input,
+            .feedback-form input {
+                display: block;
+                margin-bottom: 10px;
+                color: #000; /* Black text color */
+            }
+
             .feedback-form textarea {
                 display: block;
                 margin-bottom: 10px;
                 color: #000; /* Black text color */
+                width: 80%;
             }
 
             .feedback-form button {
@@ -661,6 +668,8 @@
                 background-color: #777; /* Slightly lighter gray on hover */
             }
         /* END Styles for the feedback overlay */
+        {%- endif -%}
+
     </style>
 
     <noscript>
@@ -969,6 +978,7 @@
         </label>
     </div>
 
+    {%- if site.data.featureData.feedback.enabled -%}
     <!-- Feedback Form Overlay -->
     <div class="feedback-overlay" id="feedbackOverlay">
         <div class="feedback-form">
@@ -979,8 +989,10 @@
 
                 <label for="description">Description:</label>
                 <textarea id="description" rows="6" required></textarea>
+                {%- if site.data.featureData.feedback.allowImage -%}
                 <label for="imageInput">Add image (max 1):</label>
                 <input type="file" id="imageInput" accept="image/png, image/jpg, image/jpeg, image/webp">
+                {%- endif -%}
                 <button type="submit">Submit</button>
                 <button type="button" id="closeButton">Close</button>
                 <button type="button" id="resetButton">Reset</button>
@@ -988,6 +1000,7 @@
         </div>
     </div>
     <!-- /Feedback Form Overlay -->
+    {%- endif -%}
 
     <link rel="preload"
           href="/assets/css/wiki-style.css?v=0.9"
@@ -1018,6 +1031,8 @@
 
     <script defer="defer" async="async" async src="/assets/js/dispatcher.js?v=0.7"></script>
 
+    {%- if site.data.featureData.feedback.enabled -%}
+    <!-- Feedback Form handling -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const feedbackTrigger = document.getElementById("feedbackTrigger");
@@ -1038,16 +1053,6 @@
                 feedbackForm.reset();
             }
 
-            //// Function to convert a File to a base64-encoded string
-            //async function readFileAsDataURL(file) {
-            //    return new Promise((resolve, reject) => {
-            //        const reader = new FileReader();
-            //        reader.onloadend = () => resolve(reader.result);
-            //        reader.onerror = reject;
-            //        reader.readAsDataURL(file);
-            //    });
-            //}
-
             feedbackTrigger.addEventListener("click", showFeedbackForm);
             closeButton.addEventListener("click", hideFeedbackForm);
             resetButton.addEventListener("click", resetFeedbackForm);
@@ -1057,9 +1062,11 @@
 
                 const nickname = document.getElementById("nickname").value;
                 const description = document.getElementById("description").value;
-                const fileInput = document.getElementById('imageInput');
                 let file = null;
                 let fileExtension = null;
+
+                {% - if site.data.featureData.feedback.allowImage -%}
+                const fileInput = document.getElementById('imageInput');
 
                 if (fileInput.files.length > 1) {
                     alert('Only one image is allowed.');
@@ -1070,6 +1077,7 @@
                     file = fileInput.files[0];
                     fileExtension = file.name.split('.').pop().toLowerCase();
                 }
+                {% - endif -%}
 
                 try {
                     sendFeedbackToDiscord(location, nickname, description, file, fileExtension);
@@ -1086,8 +1094,8 @@
         });
 
         function sendFeedbackToDiscord(fullUrl, nickname, description, imageFile, fileExtension) {
-            // just a temporary webhook, will deactivate it later
-            const webhookUrl = "https://discord.com/api/webhooks/1134548048211623997/CTtX_87tFaEBgshYrW1DOXKNYJTqpQvfrs6FSH3kiUGXMSVehna9MvLKuvcA258FfEsL";
+            // exposing the webhook in front-facing js is inevitable
+            const webhookUrl = "{{ site.data.featureData.feedback.webhookUrl }}";
 
             const payload = {
                 username: "Wiki Feedbeat",
@@ -1102,12 +1110,14 @@
 
             const formData = new FormData();
 
+            {% - if site.data.featureData.feedback.allowImage -%}
             if (imageFile !== null) {
                 payload.embeds[0].image = {
                     url: 'attachment://image.' + fileExtension
                 };
                 formData.append('image', imageFile, 'image.' + fileExtension);
             }
+            {% - endif -%}
 
             const payloadJson = JSON.stringify(payload);
             formData.append('payload_json', JSON.stringify(payload));
@@ -1130,6 +1140,8 @@
                 });
         }
     </script>
+    <!-- /Feedback Form handling -->
+    {%- endif -%}
 
 </body>
 </html>
