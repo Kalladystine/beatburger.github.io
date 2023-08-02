@@ -71,14 +71,15 @@ sitemap: false
     }
 
     // Function to process a single row and find pixels
-    // blank progress 1 30 76
-    // everyone 1 41 98
+    // blank progress 1 41 98
+    // everyone 1 30 76
     // me 87 19 75
-    // bg - varies(gradient) :(
+    // event bar blank progress 1 41 98
     function processRow(imageData, row, width) {
         const pixelData = imageData.data;
         let firstOwnContributionPixelX = null;
         let lastOwnContributionPixelX = null;
+        let lastGuildContributionPixelX = null;
         let lastContributionPixelX = null;
 
         for (let col = 0; col < width; col++) {
@@ -90,21 +91,33 @@ sitemap: false
             // const alpha = pixelData[i + 3];
             if (firstOwnContributionPixelX === null && red === 87 && green === 19) {
                 firstOwnContributionPixelX = col;
-            }
-            if (red === 87 && green === 19) {
+            } else if (red === 87 && green === 19) {
                 lastOwnContributionPixelX = col;
-            }
-            if (red === 1) {
+            } else if (red === 1 && green === 30) {
+                lastGuildContributionPixelX = col;
+            } else if (red === 1 && green === 41) {
                 lastContributionPixelX = col;
             }
         }
 
+        // control for completed task
+        if (lastContributionPixelX === null && firstOwnContributionPixelX !== null && lastOwnContributionPixelX !== null) {
+            // see if guild completed or own completed (people are crazy and bugs happen)
+            if (lastGuildContributionPixelX === null) {
+                // self completed :P
+                lastGuildContributionPixelX = lastOwnContributionPixelX;
+            }
+            lastContributionPixelX = lastGuildContributionPixelX;
+        }
+
         console.log(`Row ${row}: firstOwnContributionPixelX = ${firstOwnContributionPixelX}, lastOwnContributionPixelX = ${lastOwnContributionPixelX}, lastContributionPixelX = ${lastContributionPixelX}`);
+
 
         // rowData return
         return {
             firstOwnContributionPixelX: firstOwnContributionPixelX,
             lastOwnContributionPixelX: lastOwnContributionPixelX,
+            lastGuildContributionPixelX: lastGuildContributionPixelX,
             lastContributionPixelX: lastContributionPixelX,
         };
     }
@@ -114,7 +127,9 @@ sitemap: false
     function processCluster(cluster) {
         let minFirstOwnContributionPixelX = Infinity;
         let maxLastOwnContributionPixelX = -Infinity;
+        let maxLastGuildContributionPixelX = -Infinity;
         let maxLastContributionPixelX = -Infinity;
+        
 
         cluster.rows.forEach((rowData) => {
             if (rowData.firstOwnContributionPixelX < minFirstOwnContributionPixelX) {
@@ -125,24 +140,34 @@ sitemap: false
                 maxLastOwnContributionPixelX = rowData.lastOwnContributionPixelX;
             }
 
+            if (rowData.lastGuildContributionPixelX > maxLastGuildContributionPixelX) {
+                maxLastGuildContributionPixelX = rowData.lastGuildContributionPixelX;
+            }
+
             if (rowData.lastContributionPixelX > maxLastContributionPixelX) {
                 maxLastContributionPixelX = rowData.lastContributionPixelX;
             }
         });
 
-        // let's do it step by step
+        // let's do it step by step for "me"
         const barLength = maxLastContributionPixelX - minFirstOwnContributionPixelX;
         const contributionLength = maxLastOwnContributionPixelX - minFirstOwnContributionPixelX;
         const contributionPercentage = contributionLength / barLength;
+
+        // and for guild progress
+        const guildBarLength = maxLastGuildContributionPixelX - minFirstOwnContributionPixelX;
+        const guildProgress = guildBarLength / barLength;
 
         // Create the structure to be returned
         const result = {
             clusterStartRow: cluster.startRow,
             clusterEndRow: cluster.endRow,
-            minimumFirstOwnContributionPixelX: minFirstOwnContributionPixelX,
-            maximumLastOwnContributionPixelX: maxLastOwnContributionPixelX,
-            maximumLastContributionPixelX: maxLastContributionPixelX,
-            contributionPercentage: contributionPercentage,
+            minOwnX: minFirstOwnContributionPixelX,
+            maxOwnX: maxLastOwnContributionPixelX,
+            maxGuildX: maxLastGuildContributionPixelX,
+            maxBarX: maxLastContributionPixelX,
+            contrib: contributionPercentage * 100,
+            guild: guildProgress * 100
         };
 
         // Some debug logs
