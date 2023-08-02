@@ -1,0 +1,254 @@
+---
+
+layout: default
+permalink: /contribution-counter
+title: Contribution Counter PoC
+description: now with UX
+robots: "NOINDEX, NOFOLLOW"
+sitemap: false
+
+---
+
+
+<input type="file" id="fileInput">
+<canvas id="myCanvas"></canvas>
+<button type="button" id="findButton">Find Pixels</button>
+<div id="clusters">
+    <p>Clusters of rows with FirstOwnContributionPixel:</p>
+    <ul id="clusterList"></ul>
+</div>
+
+<div id="resultsDisplay"></div>
+
+<script type="text/javascript">
+    // Function to process the image and find clusters
+    function processImage(imageData, width, height) {
+        const clusters = [];
+        const rowsData = [];
+
+        let clusterStartRow = null;
+        let clusterEndRow = null;
+        let inPotentialCluster = false;
+
+        for (let row = 0; row < height; row++) {
+            const rowData = processRow(imageData, row, width);
+            // if row has red pixels found
+            if (rowData.firstOwnContributionPixelX !== null && rowData.lastOwnContributionPixelX !== null) {
+                // if not currently within a cluster, start one
+                if (!inPotentialCluster) {
+                    inPotentialCluster = true;
+                }
+                // only set startRow is it's not set already
+                if (clusterStartRow === null) {
+                    clusterStartRow = row;
+                }
+                // adjust endRow
+                clusterEndRow = row;
+                // add row to rows collection
+                rowsData.push(rowData);
+            } else if (inPotentialCluster) {
+                // we're out of a potential cluster
+                // push the rows into a collection property in the cluster object for further processing
+                const clusterSize = clusterEndRow - clusterStartRow + 1;
+                // consider it a cluster if 10 rows in a row have contribution bar red pixels
+                if (clusterSize >= 10) {
+                    clusters.push({
+                        startRow: clusterStartRow,
+                        endRow: clusterEndRow,
+                        // HACK: probably there's a better way for a deep copy
+                        rows: JSON.parse(JSON.stringify(rowsData))
+                    });
+                }
+                // reset state
+                inPotentialCluster = false;
+                clusterStartRow = null;
+                clusterEndRow = null;
+                rowsData.length = 0;
+            }
+        }
+
+        return clusters;
+    }
+
+    // Function to process a single row and find pixels
+    // blank progress 1 30 76
+    // everyone 1 41 98
+    // me 87 19 75
+    // bg - varies(gradient) :(
+    function processRow(imageData, row, width) {
+        const pixelData = imageData.data;
+        let firstOwnContributionPixelX = null;
+        let lastOwnContributionPixelX = null;
+        let lastContributionPixelX = null;
+
+        for (let col = 0; col < width; col++) {
+            const i = (row * width + col) * 4;
+            const red = pixelData[i];
+            const green = pixelData[i + 1];
+            // for later maybe
+            // const blue = pixelData[i + 2];
+            // const alpha = pixelData[i + 3];
+            if (firstOwnContributionPixelX === null && red === 87 && green === 19) {
+                firstOwnContributionPixelX = col;
+            }
+            if (red === 87 && green === 19) {
+                lastOwnContributionPixelX = col;
+            }
+            if (red === 1) {
+                lastContributionPixelX = col;
+            }
+        }
+
+        console.log(`Row ${row}: firstOwnContributionPixelX = ${firstOwnContributionPixelX}, lastOwnContributionPixelX = ${lastOwnContributionPixelX}, lastContributionPixelX = ${lastContributionPixelX}`);
+
+        // rowData return
+        return {
+            firstOwnContributionPixelX: firstOwnContributionPixelX,
+            lastOwnContributionPixelX: lastOwnContributionPixelX,
+            lastContributionPixelX: lastContributionPixelX,
+        };
+    }
+
+    // Function to process a cluster and find contribution start, end and bar end, and calculate contribution points
+    // Note: highly dependant on rowData having right values, so if it's wrong the error is probably in processRow
+    function processCluster(cluster) {
+        let minFirstOwnContributionPixelX = Infinity;
+        let maxLastOwnContributionPixelX = -Infinity;
+        let maxLastContributionPixelX = -Infinity;
+
+        cluster.rows.forEach((rowData) => {
+            if (rowData.firstOwnContributionPixelX < minFirstOwnContributionPixelX) {
+                minFirstOwnContributionPixelX = rowData.firstOwnContributionPixelX;
+            }
+
+            if (rowData.lastOwnContributionPixelX > maxLastOwnContributionPixelX) {
+                maxLastOwnContributionPixelX = rowData.lastOwnContributionPixelX;
+            }
+
+            if (rowData.lastContributionPixelX > maxLastContributionPixelX) {
+                maxLastContributionPixelX = rowData.lastContributionPixelX;
+            }
+        });
+
+        // let's do it step by step
+        const barLength = maxLastContributionPixelX - minFirstOwnContributionPixelX;
+        const contributionLength = maxLastOwnContributionPixelX - minFirstOwnContributionPixelX;
+        const contributionPercentage = contributionLength / barLength;
+
+        // Create the structure to be returned
+        const result = {
+            clusterStartRow: cluster.startRow,
+            clusterEndRow: cluster.endRow,
+            minimumFirstOwnContributionPixelX: minFirstOwnContributionPixelX,
+            maximumLastOwnContributionPixelX: maxLastOwnContributionPixelX,
+            maximumLastContributionPixelX: maxLastContributionPixelX,
+            contributionPercentage: contributionPercentage,
+        };
+
+        // Some debug logs
+        console.log("==== NEW CLUSTER ====");
+        console.log("Cluster startRow:", cluster.startRow);
+        console.log("Cluster endRow:", cluster.endRow);
+        console.log("Minimum firstOwnContributionPixelX:", minFirstOwnContributionPixelX);
+        console.log("Maximum lastOwnContributionPixelX:", maxLastOwnContributionPixelX);
+        console.log("Maximum lastContributionPixelX:", maxLastContributionPixelX);
+        console.log("Contribution percentage:", contributionPercentage);
+
+        return result;
+
+    }
+
+    // Function to process the image and display clusters
+    function findPixelsInImage(image) {
+        const canvas = document.getElementById("myCanvas");
+        const ctx = canvas.getContext("2d");
+        const resultsDisplay = document.getElementById("resultsDisplay");
+
+        const originalWidth = image.width;
+        const originalHeight = image.height;
+
+        canvas.width = originalWidth;
+        canvas.height = originalHeight;
+
+        ctx.drawImage(image, 0, 0, originalWidth, originalHeight);
+
+        const imageData = ctx.getImageData(0, 0, originalWidth, originalHeight);
+
+        const clusters = processImage(imageData, originalWidth, originalHeight);
+
+        let processedClusters = [];
+
+        // Process each cluster and calculate contribution percentage for each of them
+        clusters.forEach((cluster) => {
+            const processedCluster = processCluster(cluster);
+            processedClusters.push(processedCluster);
+        });
+
+        // Call the displayClusters function with the collected data and display results
+        resultsDisplay.innerHTML = displayClusters(processedClusters);
+    }
+
+    // Function to generate a table with results from processedClusters
+    function displayClusters(processedClusters) {
+        const table = document.createElement("table");
+        table.setAttribute("border", "1");
+
+        // Create table header
+        const headerRow = document.createElement("tr");
+        for (const key of Object.keys(processedClusters[0])) {
+            const th = document.createElement("th");
+            th.textContent = key;
+            headerRow.appendChild(th);
+        }
+        table.appendChild(headerRow);
+
+        // Create table rows with cluster data
+        for (const cluster of processedClusters) {
+            const row = document.createElement("tr");
+            for (const value of Object.values(cluster)) {
+                const td = document.createElement("td");
+                td.textContent = value;
+                row.appendChild(td);
+            }
+            table.appendChild(row);
+        }
+
+        // Return the innerHTML of the table (the table as an HTML string)
+        return table.outerHTML;
+    }
+
+
+    // Wait for the DOM to load
+    document.addEventListener("DOMContentLoaded", function () {
+        const fileInput = document.getElementById("fileInput");
+
+        fileInput.addEventListener("change", function () {
+            const file = fileInput.files[0];
+
+            if (file && file.type.startsWith("image/")) {
+                const reader = new FileReader();
+
+                reader.onload = function (event) {
+                    const image = new Image();
+                    image.src = event.target.result;
+
+                    image.onload = function () {
+                        findPixelsInImage(image);
+                    };
+                };
+
+                reader.readAsDataURL(file);
+            }
+        });
+
+        const findButton = document.getElementById("findButton");
+        findButton.addEventListener("click", function () {
+            const canvas = document.getElementById("myCanvas");
+            const image = new Image();
+            image.src = canvas.toDataURL();
+            image.onload = function () {
+                findPixelsInImage(image);
+            };
+        });
+    });
+</script>
