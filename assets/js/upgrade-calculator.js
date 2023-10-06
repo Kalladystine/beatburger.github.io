@@ -40,9 +40,8 @@ function calculateUpgrades(upgradesData, baseStats, fromLevel, toLevel ) {
                 sumCommon2 += upgrade.common2;
                 sumCommon3 += upgrade.common3;
                 sumGold += upgrade.gold;
-                // for multipliers we need to multiply, not add
-                multiplierHp *= upgrade.multiplierHp;
-                multiplierAttack *= upgrade.multiplierAttack;
+                multiplierHp = levelMultiplier * upgrade.multiplierHp;
+                multiplierAttack = levelMultiplier * upgrade.multiplierAttack;
             }
         }
         // checkpoint for starting level values
@@ -70,28 +69,6 @@ function calculateUpgrades(upgradesData, baseStats, fromLevel, toLevel ) {
         resultsCollection.push(levelResult);
 
     });
-
-    //// Create an object to store the results
-    //const result = {
-    //    fromLevel: fromLevel,
-    //    toLevel: toLevel,
-    //    sumEpic: sumEpic,
-    //    sumRare: sumRare,
-    //    sumSpecial: sumSpecial,
-    //    sumCommon1: sumCommon1,
-    //    sumCommon2: sumCommon2,
-    //    sumCommon3: sumCommon3,
-    //    sumGold: sumGold,
-    //    multiplierHp: multiplierHp,
-    //    multiplierAttack: multiplierAttack,
-    //    endHp: runningHp,
-    //    endAttack: runningAttack,
-    //    // stupid round...
-    //    // endDps: round(runningAttack/baseStats.attackSpeed) 
-    //    endDps: runningAttack / baseStats.attackSpeed,
-    //    checkpointHp: checkpointHp,
-    //    checkpointAttack: checkpointAttack
-    //};
 
     return resultsCollection;
 }
