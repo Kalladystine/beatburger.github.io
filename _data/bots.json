@@ -10,10 +10,10 @@
     "botOpinion": "A tank in the most classical sense. The big damage reduction from the front allows it to soak lots of damage, allowing Bullwark to always keep pushing forwards to disturb and stun.",
     "searchKeywords": "tank, shield, cc, stun",
     "baseStats": {
-      "hp": 2070,
+      "hp": 1850,
       "attack": 40,
       "attackSpeed": 0.86,
-      "version":  "1.14.6"
+      "version":  "1.16.6"
     }
   },
   {
@@ -27,10 +27,10 @@
     "botOpinion": "Nothing is more scary than an enemy Bigshot about to shoot. Nothing is more satisfying than your own blasting through your opponents. But will it get to shoot?",
     "searchKeywords": "",
     "baseStats": {
-      "hp": 1456,
+      "hp": 1300,
       "attack": 600,
       "attackSpeed": 4.0,
-      "version": "1.14.6"
+      "version": "1.16.6"
     }
   },
   {
@@ -44,10 +44,10 @@
     "botOpinion": "Cool ninja",
     "searchKeywords": "",
     "baseStats": {
-      "hp": 1008,
+      "hp": 1150,
       "attack": 125,
       "attackSpeed": 0.57,
-      "version": "unknown"
+      "version": "1.16.6"
     }
   },
   {
@@ -61,10 +61,10 @@
     "botOpinion": "Real ninja",
     "searchKeywords": "",
     "baseStats": {
-      "hp": 1176,
+      "hp": 1050,
       "attack": 75,
       "attackSpeed": 1,
-      "version": "1.14.6"
+      "version": "1.16.6"
     }
   }
 ]

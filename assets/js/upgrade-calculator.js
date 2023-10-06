@@ -24,9 +24,14 @@ function calculateUpgrades(upgradesData, baseStats, fromLevel, toLevel ) {
         // TODO: round throws an undefiined error??
         // runningHp = round(runningHp * upgrade.multiplierHp);
         // runningAttack = round(runningAttack * upgrade.multiplierAttack);
+        let levelMultiplier = 1.1 ^ (upgrade.level - 1)
+        if (levelMultiplier < 1) {
+            levelMultiplier = 1;
+        }
+
         if (upgrade.level <= toLevel) {
-            runningHp = runningHp * upgrade.multiplierHp;
-            runningAttack = runningAttack * upgrade.multiplierAttack;
+            runningHp = baseStats.hp * levelMultiplier * upgrade.multiplierHp;
+            runningAttack = baseStats.attack * levelMultiplier * upgrade.multiplierAttack;
             if (upgrade.level > fromLevel) {
                 sumEpic += upgrade.epic;
                 sumRare += upgrade.rare;
